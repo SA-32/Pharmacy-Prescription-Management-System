@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaCare - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .pharmacy-header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .nav-buttons a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-buttons a:hover {
+            background-color: #0d5bba;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .login-container h2 {
+            color: #1a73e8;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: 0.5rem;
+        }
+        
+        .forgot-password a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-button:hover {
+            background-color: #0d5bba;
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #555;
+        }
+        
+        .signup-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .flash-messages {
+            margin-bottom: 1.5rem;
+        }
+        
+        .flash-message {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .flash-message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .flash-message.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .flash-message.info {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            background-color: #f0f4f8;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="pharmacy-header">
+        <div class="logo">
+            <i class="fas fa-prescription-bottle-alt"></i>
+            <h1>PharmaCare</h1>
+        </div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('signup') }}">Sign Up</a>
+        </div>
+    </header>
+    
+    <div class="login-container">
+        <h2><i class="fas fa-user-shield"></i> User Login</h2>
+        
+        <!-- Flash messages display -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your registered email">
+                <div class="error-message" id="emailError">Please enter a valid email address</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+                <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+            </div>
+            
+            <div class="remember-forgot">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-button">Login</button>
+        </form>
+        
+        <div class="signup-link">
+            Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 PharmaCare Prescription System. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            let isValid = true;
+            
+            // Email validation
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+            
+            // Password validation
+            if (!password || password.length < 6) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('passwordError').style.display = 'none';
+            }
+            
+            if (isValid) {
+                this.submit();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+/* Basic reset and font styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Container for the entire profile page */
+.profile-container {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styling for the profile information */
+.profile-header h1 {
+    margin: 0;
+    color: #333;
+}
+.user-info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+/* Order History section */
+.order-history {
+    margin-top: 40px;
+}
+.order-history h2 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    color: #333;
+}
+
+/* Orders container with gap between cards */
+.orders {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Style for each individual order card */
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+/* Header part of the order card */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.order-header .order-id {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Status badge styling */
+.status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-transform: capitalize;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+.status.approved {
+    background: #d4edda;
+    color: #155724;
+}
+.status.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+.status.completed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Meta information for each order */
+.order-meta p {
+    margin: 5px 0;
+    color: #555;
+}
+
+/* Table styling for order items */
+.order-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+.order-items th,
+.order-items td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    color: #333;
+}
+.order-items th {
+    background-color: #f2f2f2;
+}

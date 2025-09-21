@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaCare - Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .pharmacy-header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .nav-buttons a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-buttons a:hover {
+            background-color: #0d5bba;
+        }
+        
+        .signup-container {
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .signup-container h2 {
+            color: #1a73e8;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, 
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .password-container i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .terms-conditions {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .terms-conditions input {
+            margin-right: 0.5rem;
+            margin-top: 0.2rem;
+        }
+        
+        .terms-conditions label {
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .terms-conditions a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        
+        .signup-button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .signup-button:hover {
+            background-color: #0d5bba;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #555;
+        }
+        
+        .login-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .flash-messages {
+            margin-bottom: 1.5rem;
+        }
+        
+        .flash-message {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .flash-message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .flash-message.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .flash-message.info {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            background-color: #f0f4f8;
+            margin-top: 2rem;
+        }
+        
+        .category-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .category-option {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-option:hover {
+            border-color: #1a73e8;
+        }
+        
+        .category-option.selected {
+            background-color: #e8f0fe;
+            border-color: #1a73e8;
+            color: #1a73e8;
+        }
+        
+        .category-option input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="pharmacy-header">
+        <div class="logo">
+            <i class="fas fa-prescription-bottle-alt"></i>
+            <h1>PharmaCare</h1>
+        </div>
+        <div class="nav-buttons">
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('signup') }}">Sign Up</a>
+        </div>
+    </header>
+    
+    <div class="signup-container">
+        <h2><i class="fas fa-user-plus"></i> Create Your Account</h2>
+        
+        <!-- Flash messages display -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <form id="signupForm" action="{{ url_for('signup') }}" method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="userId">User ID</label>
+                    <input type="text" id="userId" name="userId" required placeholder="Enter unique user ID">
+                    <div class="error-message" id="userIdError">Please enter a user ID</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                    <div class="error-message" id="emailError">Please enter a valid email address</div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name">
+                    <div class="error-message" id="firstNameError">Please enter your first name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" required placeholder="Enter your last name">
+                    <div class="error-message" id="lastNameError">Please enter your last name</div>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group password-container">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Create a password (min 8 chars)">
+                    <i class="fas fa-eye" id="togglePassword"></i>
+                    <div class="error-message" id="passwordError">Password must be at least 8 characters</div>
+                </div>
+                
+                <div class="form-group password-container">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                    <i class="fas fa-eye" id="toggleConfirmPassword"></i>
+                    <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" required placeholder="Enter your full address"></textarea>
+                <div class="error-message" id="addressError">Please enter your address</div>
+            </div>
+            
+            <div class="form-group">
+                <label>User Category</label>
+                <div class="category-options">
+                    <label class="category-option" for="customer">
+                        <input type="radio" id="customer" name="userCategory" value="customer" required>
+                        <i class="fas fa-user"></i><br>
+                        Customer
+                    </label>
+                    <label class="category-option" for="owner">
+                        <input type="radio" id="owner" name="userCategory" value="owner">
+                        <i class="fas fa-store"></i><br>
+                        Pharmacy Owner
+                    </label>
+                    <label class="category-option" for="supplier">
+                        <input type="radio" id="supplier" name="userCategory" value="supplier">
+                        <i class="fas fa-truck"></i><br>
+                        Supplier
+                    </label>
+                </div>
+                <div class="error-message" id="categoryError">Please select a user category</div>
+            </div>
+            
+            <div class="terms-conditions">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                <div class="error-message" id="termsError">You must agree to the terms</div>
+            </div>
+            
+            <button type="submit" class="signup-button">Create Account</button>
+        </form>
+        
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 PharmaCare Prescription System. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const password = document.getElementById('confirmPassword');
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Category selection styling
+        const categoryOptions = document.querySelectorAll('.category-option');
+        categoryOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                categoryOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('categoryError').style.display = 'none';
+            });
+        });
+        
+        // Form validation
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const userId = document.getElementById('userId').value;
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const address = document.getElementById('address').value;
+            const userCategory = document.querySelector('input[name="userCategory"]:checked');
+            const termsChecked = document.getElementById('terms').checked;
+            
+            let isValid = true;
+            
+            // Validation
+            if (!userId) {
+                document.getElementById('userIdError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('userIdError').style.display = 'none';
+            }
+            
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+            
+            if (!firstName) {
+                document.getElementById('firstNameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('firstNameError').style.display = 'none';
+            }
+            
+            if (!lastName) {
+                document.getElementById('lastNameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('lastNameError').style.display = 'none';
+            }
+            
+            if (!password || password.length < 8) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('passwordError').style.display = 'none';
+            }
+            
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('confirmPasswordError').style.display = 'none';
+            }
+            
+            if (!address) {
+                document.getElementById('addressError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('addressError').style.display = 'none';
+            }
+            
+            if (!userCategory) {
+                document.getElementById('categoryError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('categoryError').style.display = 'none';
+            }
+            
+            if (!termsChecked) {
+                document.getElementById('termsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('termsError').style.display = 'none';
+            }
+            
+            if (isValid) {
+                this.submit();
+            }
+        });
+    </script>
+</body>
+</html>

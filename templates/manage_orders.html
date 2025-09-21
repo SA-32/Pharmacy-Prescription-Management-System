@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - PharmaCare Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .order-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+        .order-status.pending {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+        .order-status.approved {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+        .order-status.rejected {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+        .order-status.completed {
+            background-color: #D1ECF1;
+            color: #0C5460;
+        }
+        .order-details {
+            margin-bottom: 15px;
+        }
+        .order-details p {
+            margin: 5px 0;
+        }
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .order-items-table th, .order-items-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .order-items-table th {
+            background-color: #f2f2f2;
+        }
+        .order-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .order-actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .approve-btn {
+            background-color: #28A745;
+            color: white;
+        }
+        .reject-btn {
+            background-color: #DC3545;
+            color: white;
+        }
+        .complete-btn {
+            background-color: #17A2B8;
+            color: white;
+        }
+        .empty-orders {
+            text-align: center;
+            padding: 40px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stock-warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <i class="fas fa-prescription-bottle-alt pharma-icon"></i>
+            <h1>PharmaCare Admin</h1>
+        </div>
+        
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('manage_medicines') }}">Manage Medicines</a></li>
+                <li><a href="{{ url_for('manage_orders') }}" class="active">Manage Orders</a></li>
+                <li><a href="{{ url_for('index') }}">View Site</a></li>
+            </ul>
+            
+            <div class="auth-buttons">
+                <span class="welcome-msg">Admin Panel</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        <h2>Manage Orders</h2>
+        
+        <div class="order-filters">
+            <button class="filter-btn active" data-status="all">All Orders</button>
+            <button class="filter-btn" data-status="pending">Pending</button>
+            <button class="filter-btn" data-status="approved">Approved</button>
+            <button class="filter-btn" data-status="completed">Completed</button>
+            <button class="filter-btn" data-status="rejected">Rejected</button>
+        </div>
+        
+        {% if orders %}
+        <div class="orders-container">
+            {% for order in orders %}
+            <div class="order-card" data-status="{{ order.status }}">
+                <div class="order-header">
+                    <h3>Order #{{ order.order_id }}</h3>
+                    <span class="order-status {{ order.status }}">{{ order.status }}</span>
+                </div>
+                
+                <div class="order-details">
+                    <p><strong>Customer:</strong> {{ order.first_name }} {{ order.last_name }} ({{ order.email }})</p>
+                    <p><strong>Order Date:</strong> {{ order.order_date }}</p>
+                    <p><strong>Total Amount:</strong> Rs{{ "%.2f"|format(order.total_amount) }}</p>
+                </div>
+                
+                <div class="order-items">
+                    <h4>Order Items:</h4>
+                    <table class="order-items-table">
+                        <thead>
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.order_items %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>Rs{{ "%.2f"|format(item.price) }}</td>
+                                <td>Rs{{ "%.2f"|format(item.price * item.quantity) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+                
+                <div class="order-actions">
+                    {% if order.status == 'pending' %}
+                    <button class="approve-btn" data-order-id="{{ order.order_id }}">Approve</button>
+                    <button class="reject-btn" data-order-id="{{ order.order_id }}">Reject</button>
+                    {% elif order.status == 'approved' %}
+                    <button class="complete-btn" data-order-id="{{ order.order_id }}">Mark as Completed</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-orders">
+            <p>No orders found</p>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2025 PharmaCare Admin Panel. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter orders by status
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const status = this.dataset.status;
+                    
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show/hide orders
+                    document.querySelectorAll('.order-card').forEach(card => {
+                        if (status === 'all' || card.dataset.status === status) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Handle order status updates
+            document.querySelectorAll('.approve-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to approve this order?')) {
+                        updateOrderStatus(this.dataset.orderId, 'approved');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.reject-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to reject this order?')) {
+                        updateOrderStatus(this.dataset.orderId, 'rejected');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.complete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (confirm('Mark this order as completed?')) {
+                        updateOrderStatus(this.dataset.orderId, 'completed');
+                    }
+                });
+            });
+            
+            function updateOrderStatus(orderId, status) {
+                fetch('/admin/update_order_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `order_id=${orderId}&status=${status}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Order status updated successfully');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating order status');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile - PharmaCare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <header class="profile-header">
+            <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
+            <div class="user-info">
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Address:</strong> {{ user.address }}</p>
+            </div>
+        </header>
+        <section class="order-history">
+            <h2>Order History</h2>
+            {% if orders %}
+            <div class="orders">
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">Order #{{ order.order_id }}</span>
+                        <span class="status {{ order.status }}">{{ order.status }}</span>
+                    </div>
+                    <div class="order-meta">
+                        <p><strong>Date:</strong> {{ order.order_date }}</p>
+                        <p><strong>Total:</strong> Rs{{ "%.2f"|format(order.total_amount) }}</p>
+                    </div>
+                    <div class="order-items">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th type="number">Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.order_items %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>Rs{{ "%.2f"|format(item.price) }}</td>
+                                    <td>Rs{{ "%.2f"|format(item.price * item.quantity) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No orders found.</p>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

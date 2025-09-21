@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PharmaCare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .hoverable-card {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hoverable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Table styles */
+        .data-section {
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none; /* Initially hidden */
+        }
+        
+        .data-table.visible {
+            display: table; /* Show when needed */
+        }
+        
+        .data-table th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .data-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .stock-low {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .expiry-soon {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        
+        .section-title {
+            margin-top: 30px;
+            color: #2c3e50;
+            font-size: 1.5em;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+            display: none; /* Initially hidden */
+        }
+        
+        .no-data.visible {
+            display: block; /* Show when needed */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <i class="fas fa-prescription-bottle-alt pharma-icon"></i>
+            <h1>PharmaCare Admin</h1>
+        </div>
+        
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('manage_medicines') }}">Manage Medicines</a></li>
+                <li><a href="{{ url_for('manage_orders') }}">Manage Orders</a></li>
+                <li><a href="{{ url_for('index') }}">View Site</a></li>
+            </ul>
+            
+            <div class="auth-buttons">
+                <span class="welcome-msg">Admin Panel</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        <h2>Admin Dashboard</h2>
+        <div class="admin-stats">
+            <div class="stat-card">
+                <h3>Total Medicines</h3>
+                <p>{{ medicine_count }}</p>
+            </div>
+            <div class="stat-card hoverable-card" id="expiring-card">
+                <h3>Expiring Soon</h3>
+                <p>{{ expiring_count }}</p>
+            </div>
+            <div class="stat-card hoverable-card" id="stockout-card">
+                <h3>Low Stock</h3>
+                <p>{{ low_stock_count }}</p>
+            </div>
+        </div>
+        
+        <!-- Data display section below the cards -->
+        <div class="data-section">
+            <h3 id="data-section-title" class="section-title"></h3>
+            <div id="no-data-message" class="no-data">No medicines found matching this criteria</div>
+            <table id="medicines-table" class="data-table">
+                <thead>
+                    <tr>
+                        <th>Medicine Name</th>
+                        <th>Stock</th>
+                        <th>Expiry Date</th>
+                        <th>Days Until Expiry</th>
+                    </tr>
+                </thead>
+                <tbody id="medicines-table-body">
+                    <!-- Table content will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2025 PharmaCare Admin Panel. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const expiringCard = document.getElementById("expiring-card");
+            const stockoutCard = document.getElementById("stockout-card");
+            const table = document.getElementById("medicines-table");
+            const tableBody = document.getElementById("medicines-table-body");
+            const sectionTitle = document.getElementById("data-section-title");
+            const noDataMessage = document.getElementById("no-data-message");
+            
+            // Hide both table and no-data message initially
+            table.classList.remove("visible");
+            noDataMessage.classList.remove("visible");
+            
+            expiringCard.addEventListener("click", function() {
+                fetch("/admin/expiring_medicines")
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Expiring data:", data);
+                        displayMedicines(data.medicines, "Medicines Expiring Soon (Next 3 Months)", 'expiry');
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        showError("Error loading expiring medicines");
+                    });
+            });
+
+            stockoutCard.addEventListener("click", function() {
+                fetch("/admin/low_stock_medicines")
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Low stock data:", data);
+                        displayMedicines(data.medicines, "Low Stock Medicines (Stock < 10)", 'stock');
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        showError("Error loading low stock medicines");
+                    });
+            });
+
+            function displayMedicines(medicines, title, highlightType) {
+                // Update section title
+                sectionTitle.textContent = title;
+                
+                // Clear previous data
+                tableBody.innerHTML = '';
+                
+                if (medicines && medicines.length) {
+                    // Hide no-data message and show table
+                    noDataMessage.classList.remove("visible");
+                    table.classList.add("visible");
+                    
+                    // Add medicines to table
+                    medicines.forEach(medicine => {
+                        const expiryDate = new Date(medicine.expiry);
+                        const today = new Date();
+                        const timeDiff = expiryDate.getTime() - today.getTime();
+                        const daysUntilExpiry = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        
+                        const stockClass = medicine.stock < 5 ? 'stock-low' : '';
+                        const expiryClass = daysUntilExpiry <= 30 ? 'expiry-soon' : '';
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${medicine.name}</td>
+                            <td class="${highlightType === 'stock' ? stockClass : ''}">${medicine.stock}</td>
+                            <td class="${highlightType === 'expiry' ? expiryClass : ''}">${expiryDate.toLocaleDateString()}</td>
+                            <td class="${highlightType === 'expiry' ? expiryClass : ''}">${daysUntilExpiry} days</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    // Show no-data message and hide table
+                    table.classList.remove("visible");
+                    noDataMessage.classList.add("visible");
+                }
+            }
+            
+            function showError(message) {
+                sectionTitle.textContent = "Error";
+                table.classList.remove("visible");
+                noDataMessage.textContent = message;
+                noDataMessage.classList.add("visible");
+            }
+        });
+    </script>
+</body>
+</html>
